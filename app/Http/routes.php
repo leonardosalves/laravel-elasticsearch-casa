@@ -15,5 +15,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('clients', '<Clients>       </Clients>Controller');
+Route::resource('clients', 'ClientsController');
 
