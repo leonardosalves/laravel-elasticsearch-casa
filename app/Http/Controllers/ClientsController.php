@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Elasticsearch\Client;
 
 class ClientsController extends Controller
 {
+
+    protected $elasticParams = [];
+
+    public function __construct(Client $client)
+   {
+        $this->elasticParams['index'] = env('ES_INDEX');
+        $this->elasticParams['type'] = 'clients';
+        $this->client = $client;
+   }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +25,8 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        return view('clients.index');
+        $clients = $this->client->search($this->elasticParams);
+        return view('clients.index', compact('clients'));
     }
 
     /**
@@ -36,7 +47,12 @@ class ClientsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        unset($data['_token']);
+        $this->elasticParams['body'] = $data;
+        $this->elasticParams['refresh'] = true;
+        $this->client->create($this->elasticParams);
+        return redirect()->route('clients.index');
     }
 
     /**

@@ -37,4 +37,4 @@
         </table>
     </div>
 
-<@endsection></@endsection>
+@endsection
