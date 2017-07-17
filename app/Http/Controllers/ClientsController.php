@@ -24,8 +24,19 @@ class ClientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $name = $request->get('name');
+        if($name){
+            $this->elasticParams['body'] = [
+                'query' => [
+                    'match' => [
+                        'name' => $name
+                    ]
+                ]
+            ];
+            $this->elasticParams['size'] = 1000;
+        }
         $clients = $this->client->search($this->elasticParams);
         return view('clients.index', compact('clients'));
     }
